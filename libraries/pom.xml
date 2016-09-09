@@ -103,6 +103,7 @@
         <module>tools/kotlin-maven-plugin-test</module>
         <module>tools/kotlin-js-tests</module>
         <module>tools/kotlin-js-tests-junit</module>
+        <module>tools/kotlin-script-util</module>
 
         <module>kotlin.test</module>
 
