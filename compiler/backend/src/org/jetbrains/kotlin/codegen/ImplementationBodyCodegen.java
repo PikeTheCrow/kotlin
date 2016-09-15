@@ -381,7 +381,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             generatePrimaryConstructor(delegationFieldsInfo);
-            for (ConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
+            for (ClassConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
                 generateSecondaryConstructor(secondaryConstructor);
             }
         }
@@ -917,7 +917,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
         if (isInterface(descriptor) || isAnnotationClass(descriptor)) return;
 
-        final ConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
+        final ClassConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
@@ -940,7 +940,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, this, kind, myClass);
     }
 
-    private void generateSecondaryConstructor(@NotNull final ConstructorDescriptor constructorDescriptor) {
+    private void generateSecondaryConstructor(@NotNull final ClassConstructorDescriptor constructorDescriptor) {
         if (!canHaveDeclaredConstructors(descriptor)) return;
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
@@ -967,7 +967,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generatePrimaryConstructorImpl(
-            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull ClassConstructorDescriptor constructorDescriptor,
             @NotNull ExpressionCodegen codegen,
             @NotNull DelegationFieldsInfo fieldsInfo,
             @Nullable KtPrimaryConstructor primaryConstructor
@@ -1028,7 +1028,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateSecondaryConstructorImpl(
-            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull ClassConstructorDescriptor constructorDescriptor,
             @NotNull ExpressionCodegen codegen
     ) {
         InstructionAdapter iv = codegen.v;
@@ -1038,7 +1038,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         markLineNumberForConstructor(constructorDescriptor, constructor, codegen);
 
-        ResolvedCall<ConstructorDescriptor> constructorDelegationCall =
+        ResolvedCall<ClassConstructorDescriptor> constructorDelegationCall =
                 getDelegationConstructorCall(bindingContext, constructorDescriptor);
         ConstructorDescriptor delegateConstructor = constructorDelegationCall == null ? null :
                                                      constructorDelegationCall.getResultingDescriptor();
@@ -1059,7 +1059,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private static void markLineNumberForConstructor(
-            @NotNull ConstructorDescriptor descriptor,
+            @NotNull ClassConstructorDescriptor descriptor,
             @Nullable KtConstructor constructor,
             @NotNull ExpressionCodegen codegen
     ) {
@@ -1363,8 +1363,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateDelegatorToConstructorCall(
             @NotNull InstructionAdapter iv,
             @NotNull ExpressionCodegen codegen,
-            @NotNull ConstructorDescriptor constructorDescriptor,
-            @Nullable ResolvedCall<ConstructorDescriptor> delegationConstructorCall
+            @NotNull ClassConstructorDescriptor constructorDescriptor,
+            @Nullable ResolvedCall<ClassConstructorDescriptor> delegationConstructorCall
     ) {
         if (delegationConstructorCall == null) {
             genSimpleSuperCall(iv);
