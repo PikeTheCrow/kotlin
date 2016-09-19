@@ -29,5 +29,7 @@ interface BasicBlockBuilder {
         }
     }
 
+    fun last(): IrElement?
+
     fun build(): BasicBlock
 }

@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.ir2cfg.builders.BasicBlockBuilder
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class GeneralBlockBuilder : BasicBlockBuilder {
-
     private val elements = mutableListOf<IrElement>()
 
     override fun add(element: IrElement) {
         elements.add(element)
     }
+
+    override fun last() = elements.lastOrNull()
 
     override fun build() = BasicBlockImpl(elements.toReadOnlyList())
 }
