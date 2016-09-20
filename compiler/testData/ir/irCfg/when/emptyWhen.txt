@@ -1,0 +1,21 @@
+// FILE: /emptyWhen.kt
+// FUN: empty
+BB 0
+CONTENT
+      1 FUN public fun empty(): kotlin.Int
+      2 BLOCK_BODY
+      3 WHEN type=kotlin.Int origin=WHEN
+      4 CONST Int type=kotlin.Int value='42'
+OUTGOING
+        When exit: WHEN type=kotlin.Int origin=WHEN
+BB 1
+INCOMING
+        When exit: WHEN type=kotlin.Int origin=WHEN
+CONTENT
+      1 RETURN type=kotlin.Nothing from='empty(): Int'
+OUTGOING
+        Function exit: FUN public fun empty(): kotlin.Int
+
+// END FUN: empty
+
+// END FILE: /emptyWhen.kt
