@@ -207,6 +207,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         args.noStdlib = true
         args.jdkHome = kotlinOptions.jdkHome
         args.noJdk = kotlinOptions.noJdk
+        args.reportPerf = kotlinOptions.reportPerf
         args.noInline = kotlinOptions.noInline
         args.noOptimize = kotlinOptions.noOptimize
         args.noCallAssertions = kotlinOptions.noCallAssertions
