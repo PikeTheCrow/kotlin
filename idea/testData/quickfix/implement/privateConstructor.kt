@@ -1,3 +1,4 @@
 // "Implement abstract class" "false"
+// ACTION: Create test
 
-abstract class Base private constructor
+abstract class <caret>Base private constructor

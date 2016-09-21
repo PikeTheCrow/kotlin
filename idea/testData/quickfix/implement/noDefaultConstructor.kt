@@ -1,3 +1,4 @@
 // "Implement abstract class" "false"
+// ACTION: Create test
 
-abstract class Base(val x: Int)
+abstract class <caret>Base(val x: Int)
