@@ -125,6 +125,12 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         else -> false
     }
 
+    fun registerUnresolvedError(offset: Int) {
+        if (myFirstErrorOffset > offset) {
+            myFirstErrorOffset = offset
+        }
+    }
+
     class KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
         private fun getControlStatementBlock(caret: Int, element: PsiElement): KtExpression? {
             when (element) {

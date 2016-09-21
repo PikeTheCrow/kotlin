@@ -140,9 +140,6 @@ public class MockPsiManager extends PsiManagerEx {
   }
 
   @Override
-  public void setAssertOnFileLoadingFilter(@NotNull VirtualFileFilter filter, @NotNull Disposable parentDisposable) {}
-
-  @Override
   public boolean isAssertOnFileLoading(@NotNull VirtualFile file) {
     return false;
   }
