@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -47,7 +48,8 @@ class LazyTopDownAnalyzer(
         private val declarationScopeProvider: DeclarationScopeProvider,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val identifierChecker: IdentifierChecker,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
 ) {
     fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
 
@@ -203,6 +205,38 @@ class LazyTopDownAnalyzer(
         overloadResolver.checkOverloads(c)
 
         bodyResolver.resolveBodies(c)
+
+        for (declaration in declarations) {
+            val visitor = object : KtVisitorVoid() {
+                override fun visitReferenceExpression(expression: KtReferenceExpression) {
+                    super.visitReferenceExpression(expression)
+
+                    // TODO: look for something similar in the codebase
+                    if ((expression as? KtNameReferenceExpression)?.getReferencedNameElementType() == KtTokens.SUPER_KEYWORD) {
+                        return
+                    }
+
+                    val target = trace.bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
+                    if (target is ClassifierDescriptor) {
+                        for (checker in classifierUsageCheckers) {
+                            checker.check(target, trace, expression)
+                        }
+
+                        if (DescriptorUtils.isCompanionObject(target)) { // TODO: explicit access to companion of deprecated class
+                            val outerClass = target.containingDeclaration as ClassDescriptor
+                            for (checker in classifierUsageCheckers) {
+                                checker.check(outerClass, trace, expression)
+                            }
+                        }
+                    }
+                }
+
+                override fun visitElement(element: PsiElement) {
+                    element.acceptChildren(this)
+                }
+            }
+            declaration.accept(visitor)
+        }
 
         return c
     }
